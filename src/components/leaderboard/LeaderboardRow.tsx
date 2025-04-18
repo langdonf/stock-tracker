@@ -1,28 +1,18 @@
 import { User } from '@/types/portfolio';
-import { calculatePortfolioValue, calculateStartingValue } from '@/utils/portfolioCalculations';
-import AddIcon from '@mui/icons-material/Add';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Button, IconButton, TableCell, TableRow, Typography } from '@mui/material';
-
-interface CurrentPrice {
-  currentPrice: number;
-}
+import { TableCell, TableRow, Typography } from '@mui/material';
+import PortfolioTrendBar from './PortfolioTrendBar';
+import React from 'react';
 
 interface LeaderboardRowProps {
   user: User;
   index: number;
-  handleRowClick: (userId: string) => void;
-  setSelectedUserId: (userId: string) => void;
-  setAddStockModalOpen: (open: boolean) => void;
-  currentPrices: Record<string, CurrentPrice>;
+  currentPrices: Record<string, { currentPrice: number }>;
   dollarChange: number;
   percentageChange: number;
   isVsTopPositive: boolean;
   isPositive: boolean;
   vsTopDollar: number;
   vsTopPercentage: number;
-  expandedUsers: Set<string>;
 }
 
 // Color constants
@@ -39,39 +29,55 @@ export default function LeaderboardRow({
   index,
   isVsTopPositive,
   vsTopPercentage,
-  expandedUsers,
-  handleRowClick,
-  setSelectedUserId,
-  setAddStockModalOpen,
 }: LeaderboardRowProps) {
+  // Update historical values when currentPrices change
+  React.useEffect(() => {
+    const updateHistoricalValues = async () => {
+      try {
+        const response = await fetch(`/api/users/${user._id}/portfolio/history`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(currentPrices),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update historical values');
+        }
+      } catch (err) {
+        console.error('Error updating historical values:', err);
+      }
+    };
+
+    if (Object.keys(currentPrices).length > 0) {
+      updateHistoricalValues();
+    }
+  }, [user._id, currentPrices]);
+
   return (
     <TableRow
       key={user._id}
       sx={{
         backgroundColor: index % 2 === 0 ? '#161B22' : '#0D1117',
         '&:hover': { backgroundColor: '#21262D' },
-      }}
-    >
+      }}>
       <TableCell
         sx={{
           width: '48px',
           backgroundColor: 'inherit',
         }}
       >
-        <IconButton
-          aria-label="expand row"
-          size="small"
-          onClick={() => handleRowClick(user._id)}
-        >
-          {expandedUsers.has(user._id) ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        </IconButton>
       </TableCell>
       <TableCell component="th" scope="row">
         <Typography variant="subtitle1">{user.name}</Typography>
       </TableCell>
-      <TableCell align="center">${calculateStartingValue().toFixed(2)}</TableCell>
+      <TableCell align="center">$50.00</TableCell>
       <TableCell align="center">
-        ${calculatePortfolioValue(user, currentPrices).toFixed(2)}
+        ${(user.cashRemaining + user.portfolio.reduce((total, stock) => {
+          const currentPrice = currentPrices[stock.ticker]?.currentPrice || stock.purchasePrice;
+          return total + stock.shares * currentPrice;
+        }, 0)).toFixed(2)}
       </TableCell>
       <TableCell align="center">${user.cashRemaining.toFixed(2)}</TableCell>
       <TableCell
@@ -115,21 +121,9 @@ export default function LeaderboardRow({
         {vsTopPercentage.toFixed(2)}%
       </TableCell>
       <TableCell align="center">
-        <Button
-          startIcon={<AddIcon />}
-          onClick={e => {
-            e.stopPropagation();
-            setSelectedUserId(user._id);
-            setAddStockModalOpen(true);
-          }}
-          size="small"
-          sx={{
-            textTransform: 'none',
-            '&:hover': { backgroundColor: 'action.hover' },
-          }}
-        >
-          Add Stock
-        </Button>
+        <PortfolioTrendBar
+          userId={user._id}
+        />
       </TableCell>
     </TableRow>
   );

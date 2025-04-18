@@ -76,6 +76,18 @@ const portfolioStockSchema = new mongoose.Schema({
   },
 });
 
+const portfolioValueSchema = new mongoose.Schema({
+  date: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  value: {
+    type: Number,
+    required: true,
+  },
+});
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -89,11 +101,24 @@ const userSchema = new mongoose.Schema(
       default: 50, // Starting with $50
     },
     portfolio: [portfolioStockSchema],
+    historicalValues: {
+      type: [portfolioValueSchema],
+      required: true,
+      default: [],
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Add a pre-save middleware to ensure historicalValues is always an array
+userSchema.pre('save', function(next) {
+  if (!this.historicalValues) {
+    this.historicalValues = [];
+  }
+  next();
+});
 
 export const Stock = mongoose.models.Stock || mongoose.model('Stock', stockSchema);
 export default mongoose.models.User || mongoose.model('User', userSchema);

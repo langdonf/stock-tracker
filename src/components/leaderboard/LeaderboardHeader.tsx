@@ -9,11 +9,11 @@ export default function LeaderboardHeader() {
         <TableCell align="center">Starting Value</TableCell>
         <TableCell align="center">Portfolio Value</TableCell>
         <TableCell align="center">Cash Remaining</TableCell>
-        <TableCell align="center">$ Δ</TableCell>
-        <TableCell align="center">% Δ</TableCell>
+        <TableCell align="center">$ Change</TableCell>
+        <TableCell align="center">% Change</TableCell>
         <TableCell align="center">vs #1 ($)</TableCell>
         <TableCell align="center">vs #1 (%)</TableCell>
-        <TableCell align="center">Actions</TableCell>
+        <TableCell align="center">Performance</TableCell>
       </TableRow>
     </TableHead>
   );

@@ -3,57 +3,66 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { Box } from '@mui/material';
 import { green, red } from '@mui/material/colors';
 
-interface StockTrendBarProps {
-  ticker: string;
-  purchasePrice: number;
-  purchaseDate: string;
+interface PortfolioTrendBarProps {
+  userId: string;
 }
 
-interface HistoricalPrice {
+interface HistoricalValue {
   date: string;
-  close: number;
+  value: number;
 }
 
-export default function StockTrendBar({ ticker, purchasePrice, purchaseDate }: StockTrendBarProps) {
-  const [historicalData, setHistoricalData] = useState<HistoricalPrice[]>([]);
+export default function PortfolioTrendBar({ userId }: PortfolioTrendBarProps) {
+  const [historicalData, setHistoricalData] = useState<HistoricalValue[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  console.log(historicalData);
   useEffect(() => {
     const fetchHistoricalData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/stocks/history?ticker=${ticker}`);
+        setError(null);
+        const response = await fetch(`/api/users/${userId}/portfolio/history`);
         if (!response.ok) {
           throw new Error('Failed to fetch historical data');
         }
         const data = await response.json();
-        const purchaseIndex = data.findIndex((day: HistoricalPrice) => day.date === purchaseDate);
-        const purchaseData = data.slice(purchaseIndex);
-        setHistoricalData(purchaseIndex > 0 ? purchaseData : data);
+        console.log(data);
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid data format received');
+        }
+        setHistoricalData(data);
       } catch (err) {
         console.error('Error fetching historical data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch historical data');
       } finally {
         setLoading(false);
       }
     };
 
     fetchHistoricalData();
-  }, [ticker, purchaseDate]);
+  }, [userId]);
 
-  if (loading || historicalData.length === 0) {
+  if (loading) {
+    return <Box sx={{ width: 180, height: 60 }} />;
+  }
+
+  if (error || historicalData.length === 0) {
     return null;
   }
 
-  // Create data points with changes
+  // Create data points with changes relative to the first value
+  const firstValue = historicalData[0].value;
   const data = historicalData.map((day, index) => ({
     x: index.toString(),
-    y: day.close - purchasePrice,
+    y: day.value - firstValue,
   }));
 
   // Calculate range for scale
   const values = data.map(d => d.y);
   const maxChange = Math.max(...values);
   const minChange = Math.min(...values);
-  const range = Math.max(Math.abs(maxChange), Math.abs(minChange));
+  const range = Math.max(Math.abs(maxChange), Math.abs(minChange)) || 1; // Ensure range is never 0
 
   // Create color map for bars
   const barColors = data.map(d => (d.y >= 0 ? green[500] : red[500]));
@@ -97,4 +106,4 @@ export default function StockTrendBar({ ticker, purchasePrice, purchaseDate }: S
       />
     </Box>
   );
-}
+} 

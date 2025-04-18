@@ -7,16 +7,28 @@ const DEFAULT_USERS = [
     name: 'Langdon',
     cashRemaining: 50,
     portfolio: [],
+    historicalValues: [{
+      date: new Date(),
+      value: 50
+    }],
   },
   {
     name: 'Andy',
     cashRemaining: 50,
     portfolio: [],
+    historicalValues: [{
+      date: new Date(),
+      value: 50
+    }],
   },
   {
     name: `J'aime`,
     cashRemaining: 50,
     portfolio: [],
+    historicalValues: [{
+      date: new Date(),
+      value: 50
+    }],
   },
 ];
 

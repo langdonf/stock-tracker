@@ -17,18 +17,21 @@ async function resetDatabase() {
         name: 'Langdon',
         cashRemaining: 50,
         portfolio: [],
+        historicalValues: [],
       },
       {
         _id: new mongoose.Types.ObjectId('67fe5f2769a2b4f384688921'),
         name: "J'aime",
         cashRemaining: 50,
         portfolio: [],
+        historicalValues: [],
       },
       {
         _id: new mongoose.Types.ObjectId('67fe5f2769a2b4f384688920'),
         name: 'Andy',
         cashRemaining: 50,
         portfolio: [],
+        historicalValues: [],
       },
     ];
 

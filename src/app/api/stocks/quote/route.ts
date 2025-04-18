@@ -11,7 +11,6 @@ export async function GET(request: Request) {
 
   try {
     const quote = await yahooFinance.quote(ticker);
-    console.log(quote);
     return NextResponse.json({
       ticker: quote.symbol,
       companyName: quote.longName || quote.shortName || '',
