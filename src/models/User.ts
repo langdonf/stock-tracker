@@ -115,7 +115,7 @@ const userSchema = new mongoose.Schema(
 // Add a pre-save middleware to ensure historicalValues is always an array
 userSchema.pre('save', function(next) {
   if (!this.historicalValues) {
-    this.historicalValues = [];
+    this.set('historicalValues', []);
   }
   next();
 });
