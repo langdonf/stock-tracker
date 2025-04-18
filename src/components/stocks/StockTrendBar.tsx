@@ -17,7 +17,7 @@ interface HistoricalPrice {
 export default function StockTrendBar({ ticker, purchasePrice, purchaseDate }: StockTrendBarProps) {
   const [historicalData, setHistoricalData] = useState<HistoricalPrice[]>([]);
   const [loading, setLoading] = useState(true);
-
+  console.log(purchaseDate);
   useEffect(() => {
     const fetchHistoricalData = async () => {
       try {
@@ -30,7 +30,10 @@ export default function StockTrendBar({ ticker, purchasePrice, purchaseDate }: S
         const purchaseIndex = data.findIndex((day: HistoricalPrice) => day.date === purchaseDate);
         console.log(purchaseIndex);
         const purchaseData = data.slice(purchaseIndex);
-        setHistoricalData(purchaseData);
+        console.log(purchaseData);
+        console.log(data);
+        console.log(purchaseIndex);
+        setHistoricalData(purchaseIndex > 0 ? purchaseData : data);
       } catch (err) {
         console.error('Error fetching historical data:', err);
       } finally {

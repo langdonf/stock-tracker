@@ -3,31 +3,19 @@ import { connectDB } from '@/lib/db';
 import User from '@/models/User';
 
 export async function GET() {
-  try {
-    await connectDB();
-    const users = await User.find({});
-    return NextResponse.json(users);
-  } catch (error: unknown) {
-    console.error('Error fetching users:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch users' },
-      { status: 500 }
-    );
-  }
+  await connectDB();
+  const users = await User.find({});
+  return NextResponse.json(users);
 }
 
 export async function POST(request: Request) {
-  try {
-    const { name } = await request.json();
-    await connectDB();
+  const { name } = await request.json();
+  await connectDB();
 
-    const user = await User.create({
-      name,
-      cashRemaining: 500,
-    });
+  const user = await User.create({
+    name,
+    cashRemaining: 500,
+  });
 
-    return NextResponse.json(user);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
-  }
+  return NextResponse.json(user);
 }

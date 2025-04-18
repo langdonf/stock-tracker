@@ -17,7 +17,7 @@ export const calculatePortfolioValue = (
   return stocksValue + user.cashRemaining;
 };
 
-export const calculateStartingValue = (user: User): number => {
+export const calculateStartingValue = (): number => {
   // Starting value is initial cash (50)
   return INITIAL_CASH;
 };
@@ -27,8 +27,7 @@ export const calculatePercentageChange = (
   currentPrices: Record<string, CurrentPrice>
 ): number => {
   const portfolioValue = calculatePortfolioValue(user, currentPrices);
-  const startingValue = calculateStartingValue(user);
-  if (startingValue === 0) return 0;
+  const startingValue = INITIAL_CASH;
   return ((portfolioValue - startingValue) / startingValue) * 100;
 };
 
@@ -37,7 +36,7 @@ export const calculateDollarChange = (
   currentPrices: Record<string, CurrentPrice>
 ): number => {
   const portfolioValue = calculatePortfolioValue(user, currentPrices);
-  const startingValue = calculateStartingValue(user);
+  const startingValue = INITIAL_CASH;
   return portfolioValue - startingValue;
 };
 

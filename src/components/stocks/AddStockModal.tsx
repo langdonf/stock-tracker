@@ -94,6 +94,7 @@ export default function AddStockModal({
       } catch (err) {
         setError('Failed to fetch stock data. Please check the ticker symbol.');
         setStockData(null);
+        console.error('Error fetching stock data:', err);
       } finally {
         setLoading(false);
       }
@@ -121,8 +122,8 @@ export default function AddStockModal({
       setPurchasePrice('');
       setPurchaseDate(new Date());
       setStockData(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add stock');
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'Failed to add stock');
     }
   };
 

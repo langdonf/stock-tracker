@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import yahooFinance from 'yahoo-finance2';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const ticker = searchParams.get('ticker');
@@ -17,8 +19,8 @@ export async function GET(request: Request) {
     const queryOptions = {
       period1: startDate,
       period2: endDate,
-      interval: '1d' as '1d',
-    };
+      interval: '1d'
+    } as const;
 
     const result = await yahooFinance.historical(ticker, queryOptions);
 
@@ -34,5 +36,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Failed to fetch historical data' }, { status: 500 });
   }
 }
-
-export const dynamic = 'force-dynamic';

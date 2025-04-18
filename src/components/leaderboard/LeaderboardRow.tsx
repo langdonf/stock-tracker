@@ -55,7 +55,7 @@ export default function LeaderboardRow({
       <TableCell
         sx={{
           width: '48px',
-          backgroundColor: 'transparent !important',
+          backgroundColor: 'inherit',
         }}
       >
         <IconButton
@@ -69,7 +69,7 @@ export default function LeaderboardRow({
       <TableCell component="th" scope="row">
         <Typography variant="subtitle1">{user.name}</Typography>
       </TableCell>
-      <TableCell align="center">${calculateStartingValue(user).toFixed(2)}</TableCell>
+      <TableCell align="center">${calculateStartingValue().toFixed(2)}</TableCell>
       <TableCell align="center">
         ${calculatePortfolioValue(user, currentPrices).toFixed(2)}
       </TableCell>

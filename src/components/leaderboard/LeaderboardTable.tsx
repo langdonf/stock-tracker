@@ -6,7 +6,7 @@ import {
   calculateVsTopDollar,
   calculateVsTopPercentage,
 } from '@/utils/portfolioCalculations';
-import { Box, Paper, Table, TableBody, TableContainer, TableRow } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableContainer } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import AddStockModal from '../stocks/AddStockModal';
 import StockRow from '../stocks/StockRow';

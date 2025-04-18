@@ -115,22 +115,11 @@ const theme = createTheme({
         root: {
           borderBottom: '1px solid #21262D',
           padding: '12px 16px',
-          '&:nth-of-type(odd)': {
-            backgroundColor: 'rgba(255, 255, 255, 0.04)',
-          },
-          '&:nth-of-type(even)': {
-            backgroundColor: 'rgba(255, 255, 255, 0.01)',
-          },
         },
         head: {
           fontWeight: 600,
           color: '#C9D1D9',
-          '&:nth-of-type(odd)': {
-            backgroundColor: 'rgba(255, 255, 255, 0.04)',
-          },
-          '&:nth-of-type(even)': {
-            backgroundColor: 'rgba(255, 255, 255, 0.01)',
-          },
+          backgroundColor: '#161B22',
         },
       },
     },
