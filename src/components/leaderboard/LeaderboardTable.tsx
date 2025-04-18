@@ -54,8 +54,8 @@ export default function LeaderboardTable({ users, onStockAdded }: LeaderboardTab
       try {
         const data = await fetchStockQuotes(Array.from(tickers));
         setCurrentPrices(data);
-      } catch (err) {
-        console.error('Error fetching prices');
+      } catch (error: unknown) {
+        console.error('Error fetching prices:', error);
       }
     };
 

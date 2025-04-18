@@ -18,10 +18,7 @@ export const calculatePortfolioValue = (
 };
 
 export const calculateStartingValue = (user: User): number => {
-  const stocksStartingValue = user.portfolio.reduce((total, stock) => {
-    return total + stock.shares * stock.purchasePrice;
-  }, 0);
-  // Starting value is initial cash (50) minus what was spent on stocks
+  // Starting value is initial cash (50)
   return INITIAL_CASH;
 };
 

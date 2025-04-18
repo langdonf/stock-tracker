@@ -1,6 +1,18 @@
 import { NextResponse } from 'next/server';
 import yahooFinance from 'yahoo-finance2';
 
+type YahooField =
+  | 'symbol'
+  | 'longName'
+  | 'shortName'
+  | 'regularMarketPrice'
+  | 'regularMarketDayHigh'
+  | 'regularMarketDayLow'
+  | 'regularMarketChange'
+  | 'regularMarketChangePercent'
+  | 'fiftyTwoWeekHigh'
+  | 'fiftyTwoWeekLow';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const tickers = searchParams.get('tickers');
@@ -11,7 +23,6 @@ export async function GET(request: Request) {
 
   const tickerArray = tickers.split(',');
 
-  try {
     // Set up query options with specific fields we need
     const queryOptions = {
       fields: [
@@ -25,12 +36,12 @@ export async function GET(request: Request) {
         'regularMarketChangePercent',
         'fiftyTwoWeekHigh',
         'fiftyTwoWeekLow',
-      ],
+      ] as YahooField[],
     };
 
     // Set up module options for better error handling
     const moduleOptions = {
-      validateResult: true, // Ensure we get valid data
+      validateResult: true as const,
       fetchOptions: {
         timeout: 10000, // 10 second timeout
       },
@@ -38,24 +49,23 @@ export async function GET(request: Request) {
 
     const quotes = await Promise.all(
       tickerArray.map(async ticker => {
-        try {
           return await yahooFinance.quoteCombine(ticker, queryOptions, moduleOptions);
-        } catch (error) {
-          if (error instanceof yahooFinance.errors.FailedYahooValidationError) {
-            console.warn(`Validation error for ${ticker}:`, error.message);
-            return null;
-          } else if (error instanceof yahooFinance.errors.HTTPError) {
-            console.warn(`HTTP error for ${ticker}: ${error.message}`);
-            return null;
-          } else {
-            console.error(`Unknown error fetching ${ticker}:`, error);
-            return null;
-          }
-        }
       })
     );
 
-    const results = quotes.reduce(
+    interface StockQuote {
+      ticker: string;
+      companyName: string;
+      currentPrice: number;
+      dailyHigh: number;
+      dailyLow: number;
+      dailyChange: number;
+      dailyChangePercent: number;
+      fiftyTwoWeekHigh: number;
+      fiftyTwoWeekLow: number;
+    }
+
+    const results = quotes.reduce<Record<string, StockQuote>>(
       (acc, quote) => {
         if (!quote) return acc;
 
@@ -72,7 +82,7 @@ export async function GET(request: Request) {
         };
         return acc;
       },
-      {} as Record<string, any>
+      {}
     );
 
     // If we got no valid results at all, return an error
@@ -81,13 +91,4 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json(results);
-  } catch (err) {
-    console.error('Error fetching stock quotes:', err);
-    return NextResponse.json(
-      {
-        error: err instanceof Error ? err.message : 'Failed to fetch stock data',
-      },
-      { status: 500 }
-    );
-  }
 }

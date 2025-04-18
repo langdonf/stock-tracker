@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import User from '@/models/User';
-import yahooFinance from 'yahoo-finance2';
 
 export async function GET() {
   try {
     await connectDB();
-
     const users = await User.find({});
     return NextResponse.json(users);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching users:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch users' },
+      { status: 500 }
+    );
   }
 }
 

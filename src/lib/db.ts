@@ -11,15 +11,11 @@ interface MongooseCache {
   promise: Promise<typeof mongoose> | null;
 }
 
-declare global {
-  var mongoose: MongooseCache;
-}
-
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+// Use a module-level cache instead of global
+const cached: MongooseCache = {
+  conn: null,
+  promise: null,
+};
 
 export async function connectDB() {
   if (cached.conn) {

@@ -27,12 +27,8 @@ export default function StockTrendBar({ ticker, purchasePrice, purchaseDate }: S
           throw new Error('Failed to fetch historical data');
         }
         const data = await response.json();
-        const purchaseIndex = data.findIndex(
-          (day: HistoricalPrice) => day.date === purchaseDate.split('T')[0]
-        );
-        console.log(data);
+        const purchaseIndex = data.findIndex((day: HistoricalPrice) => day.date === purchaseDate);
         console.log(purchaseIndex);
-        console.log(purchaseDate);
         const purchaseData = data.slice(purchaseIndex);
         setHistoricalData(purchaseData);
       } catch (err) {
@@ -43,7 +39,7 @@ export default function StockTrendBar({ ticker, purchasePrice, purchaseDate }: S
     };
 
     fetchHistoricalData();
-  }, [ticker]);
+  }, [ticker, purchaseDate]);
 
   if (loading || historicalData.length === 0) {
     return null;
