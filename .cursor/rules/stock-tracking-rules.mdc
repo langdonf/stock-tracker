@@ -1,0 +1,42 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: “Guardrails – keep existing code safe, avoid gratuitous edits”
+globs:             # applies everywhere; remove if you want directory‑specific rules
+alwaysApply: true  # always injected
+---
+
+## 0. Prime directive  
+*Do not change behaviour, APIs, or formatting unless explicitly asked.*
+
+## 1. Ask first, change later  
+1. If a request is ambiguous or risks breaking existing behaviour, **ask a clarifying question** instead of guessing.  
+2. When a user asks to “fix” or “refactor”, show a concise **plan** (bullets) and wait for confirmation before editing.
+
+## 2. Scope & minimal‑diff etiquette  
+1. Touch only the lines required to satisfy the request.  
+2. Preserve import order, naming conventions, comments, and licence headers.  
+3. Never introduce new dependencies, config files, or build steps without the user’s explicit approval.
+
+## 3. Style & conventions  
+1. Follow the project’s ESLint/Prettier/EditorConfig rules; if missing, adopt the dominant style in surrounding code.  
+2. Keep TypeScript strict‑null‑checks on; avoid `any`.  
+3. Functions must have meaningful names and typed parameters / return values.
+
+## 4. Safety checks before proposing changes  
+1. Scan for existing unit/integration tests and ensure suggested edits keep them green.  
+2. If no tests exist, include a test stub for any bug‑fix you introduce.  
+3. Never delete error handling, logging, or accessibility attributes.
+
+## 5. Output format  
+*For every change request* return:  
+
+```diff
+// Filename.ext
+@@ Original @@
+- old line
+@@ Proposed @@
++ new line
