@@ -4,7 +4,7 @@ import { User } from '@/types/portfolio';
 import { calculatePortfolioValue } from '@/utils/portfolioCalculations';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { Box, Button } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import UserPortfolios from '../userPortfolios/UserPortfolios';
 import LeaderboardTable from './LeaderboardTable';
 import { deleteStock, fetchUsers, resetDatabase } from './utils';
@@ -28,7 +28,17 @@ export default function Homepage() {
       const bValue = calculatePortfolioValue(b, currentPrices);
       return bValue - aValue; // Sort in descending order (highest first)
     });
-  }, [users, currentPrices]);
+  }, [users]); // Only depend on users, not currentPrices
+
+  const debouncedSetCurrentPrices = useCallback((prices: Record<string, { currentPrice: number }>) => {
+    setCurrentPrices(prevPrices => {
+      // Only update if there are actual changes
+      const hasChanges = Object.keys(prices).some(
+        ticker => prices[ticker].currentPrice !== prevPrices[ticker]?.currentPrice
+      );
+      return hasChanges ? prices : prevPrices;
+    });
+  }, []);
 
   const handleStockAdded = async () => {
     const data = await fetchUsers();
@@ -71,7 +81,11 @@ export default function Homepage() {
           Reset Game
         </Button>
       </Box>
-      <LeaderboardTable users={sortedUsers} currentPrices={currentPrices} setCurrentPrices={setCurrentPrices} />
+      <LeaderboardTable 
+        users={sortedUsers} 
+        currentPrices={currentPrices} 
+        setCurrentPrices={debouncedSetCurrentPrices} 
+      />
       <UserPortfolios 
         users={sortedUsers} 
         currentPrices={currentPrices}

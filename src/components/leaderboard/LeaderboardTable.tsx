@@ -22,7 +22,7 @@ interface CurrentPrice {
 }
 
 export default function LeaderboardTable({ users, currentPrices, setCurrentPrices }: LeaderboardTableProps) {
-  // Fetch prices for all stocks periodically
+  // Fetch prices for all stocks only on initial load
   useEffect(() => {
     const fetchAllPrices = async () => {
       const tickers = new Set<string>();

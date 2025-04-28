@@ -69,9 +69,10 @@ export default function AddStockModal({
     };
   }, [shares, purchasePrice, currentCash]);
 
+  // Only fetch stock data when the modal is opened and ticker is entered
   useEffect(() => {
     const fetchStockData = async () => {
-      if (!debouncedTicker) {
+      if (!ticker || !open) {
         setStockData(null);
         return;
       }
@@ -80,7 +81,7 @@ export default function AddStockModal({
       setError(null);
       try {
         const response = await fetch(
-          `/api/stocks/quote?ticker=${encodeURIComponent(debouncedTicker)}`
+          `/api/stocks/quote?ticker=${encodeURIComponent(ticker)}`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch stock data');
@@ -101,7 +102,7 @@ export default function AddStockModal({
     };
 
     fetchStockData();
-  }, [debouncedTicker]);
+  }, [ticker, open]);
 
   const handleSubmit = async () => {
     if (!stockData || !userId || !purchaseDate) {

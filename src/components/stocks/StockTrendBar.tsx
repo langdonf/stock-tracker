@@ -37,7 +37,7 @@ export default function StockTrendBar({ ticker, purchasePrice, purchaseDate }: S
     };
 
     fetchHistoricalData();
-  }, [ticker, purchaseDate]);
+  }, []);
 
   if (loading || historicalData.length === 0) {
     return null;

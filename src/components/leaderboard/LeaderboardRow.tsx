@@ -1,7 +1,7 @@
 import { User } from '@/types/portfolio';
 import { TableCell, TableRow, Typography } from '@mui/material';
 import PortfolioTrendBar from './PortfolioTrendBar';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface LeaderboardRowProps {
   user: User;
@@ -30,8 +30,8 @@ export default function LeaderboardRow({
   isVsTopPositive,
   vsTopPercentage,
 }: LeaderboardRowProps) {
-  // Update historical values when currentPrices change
-  React.useEffect(() => {
+  // Update historical values only on initial load
+  useEffect(() => {
     const updateHistoricalValues = async () => {
       try {
         const response = await fetch(`/api/users/${user._id}/portfolio/history`, {
@@ -53,7 +53,7 @@ export default function LeaderboardRow({
     if (Object.keys(currentPrices).length > 0) {
       updateHistoricalValues();
     }
-  }, [user._id, currentPrices]);
+  }, []); // Empty dependency array means it only runs on mount
 
   return (
     <TableRow
