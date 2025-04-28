@@ -14,7 +14,6 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useDebounce } from '@/hooks/useDebounce';
 
 interface AddStockModalProps {
   open: boolean;
@@ -55,8 +54,6 @@ export default function AddStockModal({
   const [stockData, setStockData] = useState<StockData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const debouncedTicker = useDebounce(ticker, 500);
 
   // Calculate total cost and remaining cash
   const { totalCost, remainingCash, isOverBudget } = useMemo(() => {
