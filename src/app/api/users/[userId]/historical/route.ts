@@ -1,15 +1,15 @@
 import { connectDB } from '@/lib/db';
 import User from '@/models/User';
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 export async function POST(
-  request: Request,
-  { params }: { params: { userId: string } }
+  request: NextRequest,
+  context: { params: { userId: string } }
 ) {
   try {
     await connectDB();
     const { value } = await request.json();
-    const { userId } = params;
+    const { userId } = context.params;
 
     if (!value || typeof value !== 'number') {
       return NextResponse.json(
