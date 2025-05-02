@@ -72,3 +72,25 @@ export const calculateVsTopPercentage = (
   if (topValue === 0) return 0;
   return ((userValue - topValue) / topValue) * 100;
 };
+
+export const updateHistoricalValues = async (
+  userId: string,
+  currentValue: number
+): Promise<void> => {
+  try {
+    const response = await fetch(`/api/users/${userId}/historical`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ value: currentValue }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update historical values');
+    }
+  } catch (error) {
+    console.error('Error updating historical values:', error);
+    throw error;
+  }
+};

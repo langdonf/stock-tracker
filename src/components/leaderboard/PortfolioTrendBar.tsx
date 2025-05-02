@@ -16,7 +16,6 @@ export default function PortfolioTrendBar({ userId }: PortfolioTrendBarProps) {
   const [historicalData, setHistoricalData] = useState<HistoricalValue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  console.log(historicalData);
   useEffect(() => {
     const fetchHistoricalData = async () => {
       try {
@@ -27,7 +26,6 @@ export default function PortfolioTrendBar({ userId }: PortfolioTrendBarProps) {
           throw new Error('Failed to fetch historical data');
         }
         const data = await response.json();
-        console.log(data);
         if (!Array.isArray(data)) {
           throw new Error('Invalid data format received');
         }
@@ -57,7 +55,7 @@ export default function PortfolioTrendBar({ userId }: PortfolioTrendBarProps) {
     x: index.toString(),
     y: day.value - firstValue,
   }));
-
+  console.log(data);
   // Calculate range for scale
   const values = data.map(d => d.y);
   const maxChange = Math.max(...values);

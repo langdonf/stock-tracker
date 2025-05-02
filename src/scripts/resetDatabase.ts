@@ -8,8 +8,6 @@ async function resetDatabase() {
 
     // Drop the users collection
     await db.connection.dropCollection('users');
-    console.log('Dropped users collection');
-
     // Create new users with the correct schema
     const users = [
       {
@@ -36,7 +34,6 @@ async function resetDatabase() {
     ];
 
     await User.insertMany(users);
-    console.log('Created new users with correct schema');
 
     process.exit(0);
   } catch (error) {

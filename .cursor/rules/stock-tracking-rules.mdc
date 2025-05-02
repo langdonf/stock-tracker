@@ -30,13 +30,3 @@ alwaysApply: true  # always injected
 1. Scan for existing unit/integration tests and ensure suggested edits keep them green.  
 2. If no tests exist, include a test stub for any bug‑fix you introduce.  
 3. Never delete error handling, logging, or accessibility attributes.
-
-## 5. Output format  
-*For every change request* return:  
-
-```diff
-// Filename.ext
-@@ Original @@
-- old line
-@@ Proposed @@
-+ new line
