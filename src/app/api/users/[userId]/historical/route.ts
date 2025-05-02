@@ -4,12 +4,12 @@ import { NextResponse, NextRequest } from 'next/server';
 
 export async function POST(
   request: NextRequest,
-  context: { params: { userId: string } }
+  { params }: { params: { userId: string } }
 ) {
   try {
     await connectDB();
     const { value } = await request.json();
-    const { userId } = context.params;
+    const { userId } = params;
 
     if (!value || typeof value !== 'number') {
       return NextResponse.json(
