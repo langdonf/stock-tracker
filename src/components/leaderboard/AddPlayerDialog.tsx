@@ -25,6 +25,7 @@ export default function AddPlayerDialog({ open, onClose, onAddPlayer }: AddPlaye
       setError('');
       onClose();
     } catch (err) {
+      console.error('Error in add player flow:', err);
       setError('Failed to add player');
     } finally {
       setIsSubmitting(false);

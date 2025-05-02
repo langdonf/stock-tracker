@@ -5,7 +5,7 @@ import { calculatePortfolioValue, updateHistoricalValues } from '@/utils/portfol
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Box, Button } from '@mui/material';
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import UserPortfolios from '../userPortfolios/UserPortfolios';
 import LeaderboardTable from './LeaderboardTable';
 import { deleteStock, fetchUsers, resetDatabase } from './utils';
