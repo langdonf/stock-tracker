@@ -18,22 +18,28 @@ export async function POST(
       );
     }
 
-    const user = await User.findById(userId);
-    if (!user) {
+    // Add new historical value using atomic update
+    const updateResult = await User.findByIdAndUpdate(
+      userId,
+      {
+        $push: {
+          historicalValues: {
+            date: new Date(),
+            value,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    if (!updateResult) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
       );
     }
 
-    // Add new historical value
-    user.historicalValues.push({
-      date: new Date(),
-      value,
-    });
-
-    await user.save();
-    return NextResponse.json(user);
+    return NextResponse.json(updateResult);
   } catch (error) {
     console.error('Error updating historical values:', error);
     return NextResponse.json(
