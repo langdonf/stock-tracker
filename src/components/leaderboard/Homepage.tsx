@@ -4,7 +4,7 @@ import { User } from '@/types/portfolio';
 import { calculatePortfolioValue, updateHistoricalValues } from '@/utils/portfolioCalculations';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { useEffect, useState, useCallback } from 'react';
 import UserPortfolios from '../userPortfolios/UserPortfolios';
 import LeaderboardTable from './LeaderboardTable';
@@ -16,6 +16,33 @@ export default function Homepage() {
   const [currentPrices, setCurrentPrices] = useState<Record<string, { currentPrice: number }>>({});
   const [loading, setLoading] = useState(true);
   const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+  }, []);
+
+  const handleLogin = () => {
+    setLoginError('');
+    if (username === 'admin' && password === 'admin') {
+      localStorage.setItem('isAdmin', 'true');
+      setIsAdmin(true);
+      setLoginOpen(false);
+      setUsername('');
+      setPassword('');
+    } else {
+      setLoginError('Invalid credentials');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAdmin');
+    setIsAdmin(false);
+  };
 
   useEffect(() => {
     const loadAll = async () => {
@@ -96,24 +123,41 @@ export default function Homepage() {
   if (loading) return null;
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<RestartAltIcon />}
-          onClick={handleReset}
-          sx={{ mr: 2 }}
-        >
-          Reset Game
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<PersonAddIcon />}
-          onClick={() => setIsAddPlayerDialogOpen(true)}
-        >
-          Add Player
-        </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, alignItems: 'center' }}>
+        <Box>
+          {isAdmin && (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<RestartAltIcon />}
+                onClick={handleReset}
+                sx={{ mr: 2 }}
+              >
+                Reset Game
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<PersonAddIcon />}
+                onClick={() => setIsAddPlayerDialogOpen(true)}
+              >
+                Add Player
+              </Button>
+            </>
+          )}
+        </Box>
+        <Box>
+          {isAdmin ? (
+            <Button variant="outlined" color="secondary" onClick={handleLogout}>
+              Logout
+            </Button>
+          ) : (
+            <Button variant="outlined" color="primary" onClick={() => setLoginOpen(true)}>
+              Login
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <LeaderboardTable
@@ -127,6 +171,7 @@ export default function Homepage() {
         currentPrices={currentPrices}
         handleDeleteStock={handleDeleteStock}
         onStockAdded={handleStockAdded}
+        isAdmin={isAdmin}
       />
 
       <AddPlayerDialog
@@ -153,6 +198,36 @@ export default function Homepage() {
           }
         }}
       />
+
+      <Dialog open={loginOpen} onClose={() => setLoginOpen(false)}>
+        <DialogTitle>Admin Login</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Username"
+            type="text"
+            fullWidth
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            error={!!loginError}
+          />
+          <TextField
+            margin="dense"
+            label="Password"
+            type="password"
+            fullWidth
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            error={!!loginError}
+            helperText={loginError}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLoginOpen(false)}>Cancel</Button>
+          <Button onClick={handleLogin} variant="contained">Login</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

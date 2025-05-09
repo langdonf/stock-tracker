@@ -13,9 +13,10 @@ interface UserPortfoliosProps {
   currentPrices: Record<string, { currentPrice: number }>;
   handleDeleteStock: (userId: string, stockId: string, currentValue: number) => void;
   onStockAdded: () => void;
+  isAdmin: boolean;
 }
 
-export default function UserPortfolios({ users, currentPrices, handleDeleteStock, onStockAdded }: UserPortfoliosProps) {
+export default function UserPortfolios({ users, currentPrices, handleDeleteStock, onStockAdded, isAdmin }: UserPortfoliosProps) {
   const [addStockModalOpen, setAddStockModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
@@ -43,20 +44,22 @@ export default function UserPortfolios({ users, currentPrices, handleDeleteStock
             <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
               {user.name}&apos;s Portfolio
             </Typography>
-            <Button
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setSelectedUserId(user._id);
-                setAddStockModalOpen(true);
-              }}
-              size="small"
-              sx={{
-                textTransform: 'none',
-                '&:hover': { backgroundColor: 'action.hover' },
-              }}
-            >
-              Add Stock
-            </Button>
+            {isAdmin && (
+              <Button
+                startIcon={<AddIcon />}
+                onClick={() => {
+                  setSelectedUserId(user._id);
+                  setAddStockModalOpen(true);
+                }}
+                size="small"
+                sx={{
+                  textTransform: 'none',
+                  '&:hover': { backgroundColor: 'action.hover' },
+                }}
+              >
+                Add Stock
+              </Button>
+            )}
           </Box>
           <TableContainer component={Paper}>
             <Table size="small">
@@ -115,27 +118,29 @@ export default function UserPortfolios({ users, currentPrices, handleDeleteStock
                         />
                       </TableCell>
                       <TableCell align="center">
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                          }}
-                        >Sell Stock
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDeleteStock(user._id, stock._id, stock.shares * currentPrice)}
+                        {isAdmin && (
+                          <Box
                             sx={{
-                              color: '#2ECC71',
-                              '&:hover': {
-                                backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                              },
-                              ml: 1,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'flex-end',
                             }}
-                          > 
-                            <MonetizationOnIcon />
-                          </IconButton>
-                        </Box>
+                          >Sell Stock
+                            <IconButton
+                              size="small"
+                              onClick={() => handleDeleteStock(user._id, stock._id, stock.shares * currentPrice)}
+                              sx={{
+                                color: '#2ECC71',
+                                '&:hover': {
+                                  backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                                },
+                                ml: 1,
+                              }}
+                            > 
+                              <MonetizationOnIcon />
+                            </IconButton>
+                          </Box>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
