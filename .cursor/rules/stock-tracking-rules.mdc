@@ -14,7 +14,6 @@ alwaysApply: true  # always injected
 
 ## 1. Ask first, change later  
 1. If a request is ambiguous or risks breaking existing behaviour, **ask a clarifying question** instead of guessing.  
-2. When a user asks to “fix” or “refactor”, show a concise **plan** (bullets) and wait for confirmation before editing.
 
 ## 2. Scope & minimal‑diff etiquette  
 1. Touch only the lines required to satisfy the request.  

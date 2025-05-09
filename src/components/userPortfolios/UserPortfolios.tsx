@@ -121,7 +121,7 @@ export default function UserPortfolios({ users, currentPrices, handleDeleteStock
                             alignItems: 'center',
                             justifyContent: 'flex-end',
                           }}
-                        >
+                        >Sell Stock
                           <IconButton
                             size="small"
                             onClick={() => handleDeleteStock(user._id, stock._id, stock.shares * currentPrice)}
@@ -132,7 +132,7 @@ export default function UserPortfolios({ users, currentPrices, handleDeleteStock
                               },
                               ml: 1,
                             }}
-                          >
+                          > 
                             <MonetizationOnIcon />
                           </IconButton>
                         </Box>

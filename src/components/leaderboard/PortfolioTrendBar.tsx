@@ -29,7 +29,19 @@ export default function PortfolioTrendBar({ userId }: PortfolioTrendBarProps) {
         if (!Array.isArray(data)) {
           throw new Error('Invalid data format received');
         }
-        setHistoricalData(data);
+
+        // Deduplicate data by keeping only the latest value for each date
+        const uniqueValues = new Map();
+        data.forEach((value: HistoricalValue) => {
+          const dateStr = new Date(value.date).toISOString().split('T')[0];
+          uniqueValues.set(dateStr, value);
+        });
+
+        // Convert back to array and sort by date
+        const deduplicatedData = Array.from(uniqueValues.values())
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        setHistoricalData(deduplicatedData);
       } catch (err) {
         console.error('Error fetching historical data:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch historical data');
@@ -55,7 +67,7 @@ export default function PortfolioTrendBar({ userId }: PortfolioTrendBarProps) {
     x: index.toString(),
     y: day.value - firstValue,
   }));
-  console.log(data);
+
   // Calculate range for scale
   const values = data.map(d => d.y);
   const maxChange = Math.max(...values);

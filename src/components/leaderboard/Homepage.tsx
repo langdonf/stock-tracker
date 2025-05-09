@@ -14,7 +14,6 @@ import AddPlayerDialog from './AddPlayerDialog';
 export default function Homepage() {
   const [users, setUsers] = useState<User[]>([]);
   const [currentPrices, setCurrentPrices] = useState<Record<string, { currentPrice: number }>>({});
-  const [sortedUsers, setSortedUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddPlayerDialogOpen, setIsAddPlayerDialogOpen] = useState(false);
 
@@ -31,13 +30,6 @@ export default function Homepage() {
         prices = await fetchStockQuotes(tickers);
         setCurrentPrices(prices);
       }
-      // Sort users by portfolio value
-      const sorted = [...data].sort((a, b) => {
-        const aValue = calculatePortfolioValue(a, prices);
-        const bValue = calculatePortfolioValue(b, prices);
-        return bValue - aValue;
-      });
-      setSortedUsers(sorted);
       setLoading(false);
     };
     loadAll();
@@ -68,12 +60,7 @@ export default function Homepage() {
 
   const handleStockAdded = async () => {
     const data = await fetchUsers();
-    const sorted = [...data].sort((a, b) => {
-      const aValue = calculatePortfolioValue(a, currentPrices);
-      const bValue = calculatePortfolioValue(b, currentPrices);
-      return bValue - aValue;
-    });
-    setUsers(sorted);
+    setUsers(data);
   };
 
   const handleReset = async () => {
@@ -99,64 +86,72 @@ export default function Homepage() {
     }
   };
 
-  const handleAddPlayer = async (name: string) => {
-    try {
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add player');
-      }
-
-      await handleStockAdded();
-    } catch (err) {
-      console.error('Error adding player:', err);
-      throw err;
-    }
-  };
+  // Sort users by portfolio value when needed
+  const sortedUsers = [...users].sort((a, b) => {
+    const aValue = calculatePortfolioValue(a, currentPrices);
+    const bValue = calculatePortfolioValue(b, currentPrices);
+    return bValue - aValue;
+  });
 
   if (loading) return null;
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', my: 2 }}>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Button
-          startIcon={<PersonAddIcon />}
-          onClick={() => setIsAddPlayerDialogOpen(true)}
-          variant="outlined"
+          variant="contained"
           color="primary"
-          sx={{ mr: 2 }}
-        >
-          Add Player
-        </Button>
-        <Button
           startIcon={<RestartAltIcon />}
           onClick={handleReset}
-          variant="outlined"
-          color="warning"
+          sx={{ mr: 2 }}
         >
           Reset Game
         </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<PersonAddIcon />}
+          onClick={() => setIsAddPlayerDialogOpen(true)}
+        >
+          Add Player
+        </Button>
       </Box>
-      <LeaderboardTable 
-        users={sortedUsers} 
-        currentPrices={currentPrices} 
-        setCurrentPrices={debouncedSetCurrentPrices} 
+
+      <LeaderboardTable
+        users={sortedUsers}
+        currentPrices={currentPrices}
+        setCurrentPrices={debouncedSetCurrentPrices}
       />
-      <UserPortfolios 
-        users={sortedUsers} 
+
+      <UserPortfolios
+        users={users}
         currentPrices={currentPrices}
         handleDeleteStock={handleDeleteStock}
         onStockAdded={handleStockAdded}
       />
+
       <AddPlayerDialog
         open={isAddPlayerDialogOpen}
         onClose={() => setIsAddPlayerDialogOpen(false)}
-        onAddPlayer={handleAddPlayer}
+        onAddPlayer={async (name: string) => {
+          try {
+            const response = await fetch('/api/users', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ name }),
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to add player');
+            }
+
+            await handleStockAdded();
+          } catch (err) {
+            console.error('Error adding player:', err);
+            throw err;
+          }
+        }}
       />
     </Box>
   );

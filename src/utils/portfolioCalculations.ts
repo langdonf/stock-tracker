@@ -17,18 +17,12 @@ export const calculatePortfolioValue = (
   return stocksValue + user.cashRemaining;
 };
 
-export const calculateStartingValue = (): number => {
-  // Starting value is initial cash (50)
-  return INITIAL_CASH;
-};
-
 export const calculatePercentageChange = (
   user: User,
   currentPrices: Record<string, CurrentPrice>
 ): number => {
   const portfolioValue = calculatePortfolioValue(user, currentPrices);
-  const startingValue = INITIAL_CASH;
-  return ((portfolioValue - startingValue) / startingValue) * 100;
+  return ((portfolioValue - INITIAL_CASH) / INITIAL_CASH) * 100;
 };
 
 export const calculateDollarChange = (
@@ -36,8 +30,7 @@ export const calculateDollarChange = (
   currentPrices: Record<string, CurrentPrice>
 ): number => {
   const portfolioValue = calculatePortfolioValue(user, currentPrices);
-  const startingValue = INITIAL_CASH;
-  return portfolioValue - startingValue;
+  return portfolioValue - INITIAL_CASH;
 };
 
 export const findTopPerformer = (
